@@ -21,6 +21,7 @@ body{
 </select>
 证件:<select name="zheng">
 <option value="0">合同房</option>
+<option value="1">新证</option>
 <option value="2">证两年</option>
 <option value="5">证五年</option>
 </select>
@@ -53,6 +54,8 @@ if(!empty($_POST["sub"])){
 		case 0:
 			$zheng_l="合同房";
 			break;
+		case 1:
+			$zheng_l="新证";
 		case 2:
 			$zheng_l="证两年";
 			break;
@@ -232,3 +235,4 @@ if(!empty($_POST["sub"])){
 	echo "Contact QQ:383804638";
 
 ?>
+
