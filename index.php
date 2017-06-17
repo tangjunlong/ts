@@ -56,6 +56,7 @@ if(!empty($_POST["sub"])){
 			break;
 		case 1:
 			$zheng_l="新证";
+			break;
 		case 2:
 			$zheng_l="证两年";
 			break;
