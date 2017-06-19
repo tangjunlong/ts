@@ -188,6 +188,9 @@ if(!empty($_POST["sub"])){
 	$ggzs=$pd*$mian*0.001;
 	echo "过户杂税(0.001)： $ggzs <br /><br />";
 	
+	$xj=$bzqs+$wj+$ghqs+$ghyys+$gggs+$ggzs;
+	echo "小计：$xj";
+	
 	#贷款
 	#大于144平方米，贷款三层
 	if($mian>144)
