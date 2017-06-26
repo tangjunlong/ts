@@ -759,7 +759,7 @@ if(!empty($_POST["submit"])){
 	
 	
 	#贷款小计
-	$dkxj=$dypg+$dbf+$fwf;
+	$dkxj=$dypg+$db+$fwf;
 	echo "贷款费用：<b> $dkxj </b> <br /><br />";
 	
 	$xj=$bzxj+$ghxj+$zjf+$dkxj;
