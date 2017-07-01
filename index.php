@@ -15,6 +15,18 @@ blockquote,q{quotes:none}
 blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}
 table{border-collapse:collapse;border-spacing:0}
 
+.z_descript
+{
+	color:#000;
+	font-size:0.5em;
+}
+
+.mm
+{
+	color:#fff;
+	font-size:0.5em;
+}
+
 .clear {height:0px; clear:both;}
 body {
   margin:10px;
@@ -442,21 +454,21 @@ html.dark {
 	<label class="text">
 	<span>评估单价</span>
 		<div class="input-wrapper">
-			<input type="text" name="pd" placeholder="请输入评估单价" /> 
+			<input type="text" name="pd" placeholder="请输入评估单价，单位：元" /> 
 		</div>
 	</label>
 	
 	<label class="text">
 	<span>合同总价</span>
 		<div class="input-wrapper">
-			<input type="text" name="hd" placeholder="请输入合同总价" /> 
+			<input type="text" name="hd" placeholder="请输入合同总价，单位：万元" /> 
 		</div>
 	</label>
 	
 	<label class="text">
 	<span>成交总价</span>
 		<div class="input-wrapper">
-			<input type="text" name="cj" placeholder="请输入成交总价" /> 
+			<input type="text" name="cj" placeholder="请输入成交总价，单位：万元" /> 
 		</div>
 	</label>
 
@@ -470,43 +482,27 @@ html.dark {
 </div>
 
 
-
-
-
-
-<!--物业类型：<select name="wylx">
-<option value="1">普通住宅</option>
-<option value="2">非普通住宅</option>
-<option value="3">经济适用房</option>
-</select><br />
-房数:<select name="fs">
-<option value="1">首套</option>
-<option value="2">二套</option>
-<option value="3">三套</option>
-</select><br />
-房产购置年限:<select name="zheng">
-<option value="0">合同房</option>
-<option value="1">新证</option>
-<option value="2">证两年</option>
-<option value="5">证五年</option>
-</select><br />
-上楼方式:<select name="slfs">
-<option value="1">电梯</option>
-<option value="0">楼梯</option>
-</select><br />
-楼层:<input type="text" name="lc" placeholder="请输入楼层数" /><br />
-建筑面积:<input type="text" name="mian" placeholder="请输入房屋面积" /><br />
-评估单价:<input type="text" name="pd" placeholder="请输入评估单价" /><br />
-合同总价:<input type="text" name="hd" placeholder="请输入合同总价" /><br />
-成交总价:<input type="text" name="cj" placeholder="请输入成交总价" /><br />
-<input type="submit" name="sub" value="开始计算" /><br /><br />-->
-
 </form>
 
 </body>
 
 </html>
 <?php
+
+//价格转换
+function tfa($num)
+{
+	$num=$num*10000;
+	return $num;
+}
+
+#万转换
+function floor_num($num)
+{
+	$num=floor($num/10000)*10000;
+	return $num;
+}
+	
 if(!empty($_POST["submit"])){
     $wylx=$_POST["wylx"];
 	$fs=$_POST["fs"];
@@ -517,6 +513,9 @@ if(!empty($_POST["submit"])){
 	$pd=$_POST["pd"];
 	$hd=$_POST["hd"];
 	$cj=$_POST["cj"];
+	
+	$hd=tfa($hd);
+	$cj=tfa($cj);
 	
 	$pgzj=$pd*$mian;
 
@@ -553,7 +552,9 @@ if(!empty($_POST["submit"])){
 			echo "无法辨认几套房";
 	}
 	
-	echo "<b>房数： $fs_l ，证件：$zheng_l ，楼层：$lc 楼，面积：$mian ㎡，评估总价: ".(($pgzj!=NULL)?number_format($pgzj):0)." 元,合同总价: ".(($hd!=NULL)?number_format($hd):0)." 元</b><br /><br />";
+	echo "<span class='z_descript'>房数： $fs_l ，证件：$zheng_l ，楼层：$lc 楼，面积：$mian ㎡，评估总价: ".(($pgzj!=NULL)?number_format($pgzj):0)." 元,合同总价: ".(($hd!=NULL)?number_format($hd):0)." 元</span><br /><br />";
+	
+	echo "<b>办证明细：</b><br />";
 	
 	if($zheng<=0)
 	{
@@ -564,7 +565,7 @@ if(!empty($_POST["submit"])){
 		if($mian<=90)
 		{
 			$bzqs=$hd*0.01;
-			echo "办证契税(90㎡以下)(0.01)，$bzqs <br />";
+			echo "办证契税(90㎡以下)<span class='mm'>(1)</span>，$bzqs <br />";
 		}
 		
 		#大于90平米办证契税
@@ -573,17 +574,17 @@ if(!empty($_POST["submit"])){
 			if($fs==1)
 			{
 				$bzqs=$hd*0.015;
-				echo "首套房办证契税(0.015)： $bzqs <br />";
+				echo "首套房办证契税<span class='mm'>(1.5)</span>： $bzqs <br />";
 			}
 			if($fs==2)
 			{
 				$bzqs=$hd*0.02;
-				echo "二套房办证契税(0.02)： $bzqs <br />";
+				echo "二套房办证契税<span class='mm'>(2)</span>： $bzqs <br />";
 			}
 			if($fs==3)
 			{
 				$bzqs=$hd*0.03;
-				echo "三套房办证契税(0.03)： $bzqs <br />";
+				echo "三套房办证契税<span class='mm'>(3)</span>： $bzqs <br />";
 			}
 		}
 		
@@ -591,7 +592,7 @@ if(!empty($_POST["submit"])){
 		if($slfs==0)
 		{
 			$wj=$mian*55;
-			echo "楼梯维修基金(55)： $wj <br ><br />";
+			echo "楼梯维修基金<span class='mm'>(55)</span>： $wj <br ><br />";
 		}
 		
 		#电梯维修基金
@@ -600,12 +601,12 @@ if(!empty($_POST["submit"])){
 			if($lc<=11)
 			{
 				$wj=$mian*73;#62
-				echo "电梯低层维修基金(73)： $wj <br /><br />";
+				echo "电梯低层维修基金<span class='mm'>(73)</span>： $wj <br /><br />";
 			}
 			else
 			{
 				$wj=$mian*73;
-				echo "电梯高层维修基金(73)： $wj <br /><br />";
+				echo "电梯高层维修基金<span class='mm'>(73)</span>： $wj <br /><br />";
 			}
 		}
 	}
@@ -616,7 +617,7 @@ if(!empty($_POST["submit"])){
 		echo "办证契税： $bzqs <br />维修基金： $wj <br /><br />";
 	}
 
-	
+	echo "<b>过户明细：</b><br />";
 	#过户
 	#首套契税
 	if($fs==1)
@@ -624,12 +625,12 @@ if(!empty($_POST["submit"])){
 		if($mian<=90)
 		{
 			$ghqs=$pd*$mian*0.01;
-			echo "首套房过户契税(0.01)： $ghqs <br />";
+			echo "首套房过户契税<span class='mm'>(1)</span>： $ghqs <br />";
 		}
 		if($mian>90)
 		{
 			$ghqs=$pd*$mian*0.015;
-			echo "首套房过户契税(0.015)： $ghqs <br />";
+			echo "首套房过户契税<span class='mm'>(1.5)</span>： $ghqs <br />";
 		}
 	}
 	
@@ -637,21 +638,21 @@ if(!empty($_POST["submit"])){
 	if($fs==2)
 	{
 		$ghqs=$pd*$mian*0.02;
-		echo "二套房过户契税(0.02)： $ghqs <br />";
+		echo "二套房过户契税<span class='mm'>(2)</span>： $ghqs <br />";
 	}
 	
 	#三套契税
 	if($fs==3)
 	{
 		$ghqs=$pd*$mian*0.03;
-		echo "三套房过户契税(0.03)： $ghqs <br />";
+		echo "三套房过户契税<span class='mm'>(3)</span>： $ghqs <br />";
 	}
 	
 	#营业税
 	if($zheng<2)
 	{
 		$ghyys=$pd*$mian*0.056;
-		echo "营业税(0.056)：$ghyys <br />";
+		echo "营业税<span class='mm'>(5.6)</span>：$ghyys <br />";
 	}
 	else if($zheng>=2)
 	{
@@ -668,28 +669,21 @@ if(!empty($_POST["submit"])){
 	else if($fs>1 || $zheng<5)
 	{
 		$gggs=$pd*$mian*0.01;
-		echo "过户个税(0.01)： $gggs <br />";
+		echo "过户个税<span class='mm'>(1)</span>： $gggs <br />";
 	}
 	
 	#杂税
 	$ggzs=$pd*$mian*0.001;
-	echo "过户杂税(0.001)： $ggzs <br /><br />";
+	echo "过户杂税<span class='mm'>(0.1)</span>： $ggzs <br /><br />";
 	
-	
-	#万转换
-	function floor_num($num)
-	{
-		$num=floor($num/10000)*10000;
-		return $num;
-	}
-	
+	echo "<b>贷款明细：</b><br />";
 	#贷款
 	#大于144平方米，贷款三层
 	if($fs==1)
 	{
 		$dk_c=$pd*$mian*0.7;
 		$dk=floor_num($dk_c);
-		echo "贷款金额(0.7)： <b>".number_format($dk)." </b><br /><br />";
+		echo "贷款金额<span class='mm'>(7)</span>： ".number_format($dk)." <br />";
 	}
 	else if($fs>1)
 	{
@@ -698,54 +692,33 @@ if(!empty($_POST["submit"])){
 		{
 			$dk_c=$pd*$mian*0.3;
 			$dk=floor_num($dk_c);
-			echo "贷款三层(0.3)： <b>".number_format($dk)." </b><br /><br />";
+			echo "贷款三层<span class='mm'>(3)</span>： <b>".number_format($dk)." </b><br /><br />";
 		}
 		else
 		{
 			$dk_c=$pd*$mian*0.5;
 			$dk=floor_num($dk_c);
-			echo "贷款金额(0.5)： <b>".number_format($dk)." </b><br /><br />";
+			echo "贷款金额<span class='mm'>(5)</span>： <b>".number_format($dk)." </b><br /><br />";
 		}
 	}
 	
-	// if($mian>144)
-	// {
-		// $dk_c=$pd*$mian*0.3;
-		// $dk=floor_num($dk_c);
-		// echo "贷款三层(0.3)： <b>".number_format($dk)." </b><br /><br />";
-	// }
-	// else if($mian<=144)
-	// {
-		// if($fs<=1)
-		// {
-			// $dk_c=$pd*$mian*0.7;
-			// $dk=floor_num($dk_c);
-			// echo "贷款金额(0.7)： <b>".number_format($dk)." </b><br />";
-		// }
-		// else if($fs>=2)
-		// {
-			// $dk_c=$pd*$mian*0.5;
-			// $dk=floor_num($dk_c);
-			// echo "贷款金额(0.5)： <b>".number_format($dk)." </b><br />";
-		// }
-	// }
-	
 	#抵押评估费
 	$dypg=$pd*$mian*0.005;
-	echo "抵押评估费(0.005)： $dypg <br />";
+	echo "抵押评估费<span class='mm'>(0.5)</span>： $dypg <br />";
 	
 	#担保费
 	$dbf=$dk*0.01;
 	$db= $dbf>=2000 ? $dbf : 2000;
-	echo "担保费(0.01)：$db <br />";
+	echo "担保费<span class='mm'>(1)</span>：$db <br />";
 	
 	#服务费
 	$fwf=1395;
 	echo "服务费： $fwf <br /><br />";
 	
+	echo "<b>费用明细列表：</b><br />";
 	#中介费
 	$zjf=$cj*0.02;
-	echo "中介费(0.02)：<b> $zjf </b> <br />";
+	echo "中介费<span class='mm'>(2)</span>：<b> $zjf </b> <br />";
 	
 	#办证
 	$bzxj=$bzqs+$wj;
@@ -768,8 +741,9 @@ if(!empty($_POST["submit"])){
 	//$wxjj=($wj!=0)?$wj:0;
 	//$bzqs_l=($bzqs!=0)?$bzqs:0;
 	
-    $con=$wj+$bzqs+$ghqs+$ghyys+$gggs+$ggzs+$dypg+$db+$fwf+($hd-$dk)+$zjf;
-    echo "首付总计： $hd+$xj-$dk=<b>".number_format($con)."</b><br /><br />";
+    //$con=$wj+$bzqs+$ghqs+$ghyys+$gggs+$ggzs+$dypg+$db+$fwf+($hd-$dk)+$zjf;
+	$con=$cj+$xj-$dk;
+    echo "首付总计： $cj+$xj-$dk=<b>".number_format($con)."</b><br /><br />";
 }
 	echo "<span style='color:#ccc; font-size:0.8em; text-align:conter;'>开发者：唐俊龙&nbsp;&nbsp;联系 QQ:383804638&nbsp;&nbsp;备案号：鄂ICP备12010780号-5</span>";
 
