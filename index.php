@@ -23,8 +23,8 @@ table{border-collapse:collapse;border-spacing:0}
 
 .mm
 {
-	color:#fff;
-	font-size:0.5em;
+	color:#ff0000;
+	font-size:0.8em;
 }
 
 .clear {height:0px; clear:both;}
@@ -395,8 +395,8 @@ html.dark {
 	  <select size="1" name="wylx">
 		<!--<option>-- 请选择物业类型 --</option>-->
 		<option value="1">普通住宅</option>
-		<option value="2">非普通住宅</option>
-		<option value="3">经济适用房</option>  
+		<!--<option>--<option value="2">非普通住宅</option>-->
+		<!--<option>--<option value="3">经济适用房</option>-->
 	  </select>
 	</div>
 	</label>
@@ -452,7 +452,14 @@ html.dark {
 	</label>
 	
 	<label class="text">
-	<span>评估单价</span>
+	<span>低评估单价</span>
+		<div class="input-wrapper">
+			<input type="text" name="dpd" placeholder="请输入评估单价，单位：元" /> 
+		</div>
+	</label>
+	
+	<label class="text">
+	<span>高评估单价</span>
 		<div class="input-wrapper">
 			<input type="text" name="pd" placeholder="请输入评估单价，单位：元" /> 
 		</div>
@@ -502,7 +509,41 @@ function floor_num($num)
 	$num=floor($num/10000)*10000;
 	return $num;
 }
+
+#办证函数
+// function bz($hd,$mian,$lc,$slfs)
+// {
+	// #合同房
+	// #办证
 	
+	// #小于90平米办证契税
+	// if($mian<=90)
+	// {
+		// $bzqs=$hd*0.01;
+		// echo "办证契税(90㎡以下)<span class='mm'>(1)</span>，$bzqs <br />";
+	// }
+	
+	// #大于90平米办证契税
+	// if($mian>90)
+	// {
+		// if($fs==1)
+		// {
+			// $bzqs=$hd*0.015;
+			// echo "首套房办证契税<span class='mm'>(1.5)</span>： $bzqs <br />";
+		// }
+		// if($fs==2)
+		// {
+			// $bzqs=$hd*0.02;
+			// echo "二套房办证契税<span class='mm'>(2)</span>： $bzqs <br />";
+		// }
+		// if($fs==3)
+		// {
+			// $bzqs=$hd*0.03;
+			// echo "三套房办证契税<span class='mm'>(3)</span>： $bzqs <br />";
+		// }
+	// }
+// }
+
 if(!empty($_POST["submit"])){
     $wylx=$_POST["wylx"];
 	$fs=$_POST["fs"];
@@ -511,6 +552,7 @@ if(!empty($_POST["submit"])){
 	$lc=$_POST["lc"];
 	$mian=$_POST["mian"];
 	$pd=$_POST["pd"];
+	$dpd=$_POST["dpd"];
 	$hd=$_POST["hd"];
 	$cj=$_POST["cj"];
 	
@@ -617,7 +659,69 @@ if(!empty($_POST["submit"])){
 		echo "办证契税： $bzqs <br />维修基金： $wj <br /><br />";
 	}
 
-	echo "<b>过户明细：</b><br />";
+#-----------------------------------------------------------------------------------------#
+	echo "<b>低过户明细：</b><br />";
+	#低过户
+	#首套契税
+	if($fs==1)
+	{
+		if($mian<=90)
+		{
+			$dghqs=$dpd*$mian*0.01;
+			echo "首套房过户契税<span class='mm'>(1)</span>： $dghqs <br />";
+		}
+		if($mian>90)
+		{
+			$dghqs=$dpd*$mian*0.015;
+			echo "首套房过户契税<span class='mm'>(1.5)</span>： $dghqs <br />";
+		}
+	}
+	
+	#二套契税
+	if($fs==2)
+	{
+		$dghqs=$dpd*$mian*0.02;
+		echo "二套房过户契税<span class='mm'>(2)</span>： $dghqs <br />";
+	}
+	
+	#三套契税
+	if($fs==3)
+	{
+		$dghqs=$dpd*$mian*0.03;
+		echo "三套房过户契税<span class='mm'>(3)</span>： $dghqs <br />";
+	}
+	
+	#营业税
+	if($zheng<2)
+	{
+		$dghyys=$dpd*$mian*0.056;
+		echo "营业税<span class='mm'>(5.6)</span>：$dghyys <br />";
+	}
+	else if($zheng>=2)
+	{
+		$dghyys=0;
+		echo "营业税：$dghyys <br />";
+	}
+	
+	#个税
+	if($fs<=1 && $zheng>=5)
+	{
+		$dgggs=0;
+		echo "过户个税： $dgggs <br />";
+	}
+	else if($fs>1 || $zheng<5)
+	{
+		$dgggs=$dpd*$mian*0.01;
+		echo "过户个税<span class='mm'>(1)</span>： $dgggs <br />";
+	}
+	
+	#杂税
+	$dggzs=$dpd*$mian*0.001;
+	echo "过户杂税<span class='mm'>(0.1)</span>： $dggzs <br /><br />";
+	
+#---------------------------------------------------------------------------------------------#
+	
+	echo "<b>高过户明细：</b><br />";
 	#过户
 	#首套契税
 	if($fs==1)
@@ -724,10 +828,14 @@ if(!empty($_POST["submit"])){
 	$bzxj=$bzqs+$wj;
 	echo "办证：<b> $bzxj </b> <br />";
 	
-	#过户
+	#高过户
 	$ghxj=$ghqs+$ghyys+$gggs+$ggzs;
 	echo "过户：<b> $ghxj </b> <br />";
 	
+	
+	#低过户
+	$dghxj=$dghqs+$dghyys+$dgggs+$dggzs;
+	echo "低过户：<b> $dghxj </b> <br />";
 	
 	
 	
@@ -736,12 +844,18 @@ if(!empty($_POST["submit"])){
 	echo "贷款费用：<b> $dkxj </b> <br /><br />";
 	
 	$xj=$bzxj+$ghxj+$zjf+$dkxj;
-	echo "后期费用小计：<b> $xj </b><br />";
+	echo "高后期费用小计：<b> $xj </b><br />";
+	
+	$dxj=$bzxj+$dghxj+$zjf+$dkxj;
+	echo "低后期费用小计：<b> $dxj </b><br /><br />";
 	
 	//$wxjj=($wj!=0)?$wj:0;
 	//$bzqs_l=($bzqs!=0)?$bzqs:0;
 	
     //$con=$wj+$bzqs+$ghqs+$ghyys+$gggs+$ggzs+$dypg+$db+$fwf+($hd-$dk)+$zjf;
+	$dcon=$cj+$dxj-$dk;
+	$con=$cj+$xj-$dk;
+    echo "低首付总计： $cj+$dxj-$dk=<b>".number_format($dcon)."</b><br /><br />";
 	$con=$cj+$xj-$dk;
     echo "首付总计： $cj+$xj-$dk=<b>".number_format($con)."</b><br /><br />";
 }
